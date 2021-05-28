@@ -3,7 +3,7 @@ CFLAGS = -g -c -std=c18 -Wall -Wpedantic -Wextra
 all: jc-shell fibonacci div0
 
 jc-shell: jc-shell.o commandlinereader.o ourfunctions.o ourthreads.o
-	gcc -o jc-shell commandlinereader.o jc-shell.o ourfunctions.o ourthreads.o -lpthread
+	gcc -o jc-shell commandlinereader.o jc-shell.o ourfunctions.o ourthreads.o -pthread
 
 commandlinereader.o: commandlinereader.h
 	gcc $(CFLAGS) commandlinereader.c

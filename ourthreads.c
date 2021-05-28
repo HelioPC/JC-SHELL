@@ -20,12 +20,27 @@ void* monitor_Thread(void *args){
 
 	/*this is the main loop*/
 	while(1){
+		pthread_mutex_lock(&mutex);
+		if(numChildren > 0){
+			pthread_mutex_unlock(&mutex);
+			/*waits the process in execution to terminate*/
+			await = wait(&status);
+			pthread_mutex_lock(&mutex);
+			update_terminated_process((LIST_PROC*)(list), await, status,
+			time(NULL));
+			(numChildren)--;
+			pthread_mutex_unlock(&mutex);
+			sem_post(&sem);
+			continue;
+		}
+		pthread_mutex_unlock(&mutex);
+
 		/*sleep for one second then continuos the cicle */
 		pthread_mutex_lock(&mutex);
-		if((numChildren) == 0 && Exit != 1){ /* Critical section*/
-			sem_wait(&sem_sleep);
+		if(Exit != 1){ /* Critical section*/
 			pthread_mutex_unlock(&mutex);
-	
+			sem_wait(&sem_sleep);
+			continue;
 		}
 		pthread_mutex_unlock(&mutex);
 		
@@ -35,16 +50,6 @@ void* monitor_Thread(void *args){
 			pthread_mutex_unlock(&mutex);
 			pthread_exit(NULL);
 		}
-		pthread_mutex_unlock(&mutex);
-		
-		
-		/*waits the process in execution to terminate*/
-		await = wait(&status);
-		pthread_mutex_lock(&mutex);
-		update_terminated_process((LIST_PROC*)(list), await, status,
-		time(NULL));
-		(numChildren)--;
-		sem_post(&sem);
 		pthread_mutex_unlock(&mutex);
 	}
  }

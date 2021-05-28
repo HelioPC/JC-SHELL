@@ -14,7 +14,10 @@
 #include "commandlinereader.h"
 #include "ourheadfile.h"
 #include <semaphore.h>
-#define MAXPAR 4
+
+#define MAXPAR 3
+#define BUFFERSIZE 100
+#define VECTORSIZE 7
 
 
 pthread_mutex_t mutex;
@@ -26,8 +29,8 @@ sem_t sem_sleep;
 
 int main(int argc, char **argv){
 	int pid, numargs;
-	char buffer[100];
-	char *argvector[7];
+	char buffer[BUFFERSIZE];
+	char *argvector[VECTORSIZE];
 	void *result;
 	pthread_t monitorThread;
 
@@ -49,12 +52,12 @@ int main(int argc, char **argv){
 	/*Creates the monitor thread*/
 	if(pthread_create(&monitorThread, NULL, monitor_Thread, NULL) == -1){
 			puts("\033[31mError creating monitor thread\033[m");
-			exit(12);
+			exit(THREAD_CREATE_FAILED);
 	}
 
 	while(1){
 		/*Read the command*/
-		numargs = readLineArguments(argvector, 7, buffer, 100);
+		numargs = readLineArguments(argvector, VECTORSIZE, buffer, BUFFERSIZE);
 
 		if(feof(stdin) != 0) strcpy(argvector[0], "exit");
 
@@ -75,7 +78,7 @@ int main(int argc, char **argv){
 				process_destroy(list);
 				pthread_mutex_destroy(&mutex);
 				fclose(stdin);
-				exit(0);
+				exit(EXIT_SUCCESS);
 				break;
 
 			case INT_CLEAR:
@@ -95,14 +98,16 @@ int main(int argc, char **argv){
 					break;
 				}
 
-				/*Critical section*/
-				pthread_mutex_lock(&mutex);
-				numChildren++;
-				insert_new_process(list, pid, time(NULL));
-				pthread_mutex_unlock(&mutex);
-				sem_post(&sem_sleep);
+				else if(pid == 0) execv(argvector[0], argvector);
 
-				if(pid == 0) execv(argvector[0], argvector);
+				else{
+					/*Critical section*/
+					pthread_mutex_lock(&mutex);
+					numChildren++;
+					insert_new_process(list, pid, time(NULL));
+					pthread_mutex_unlock(&mutex);
+					sem_post(&sem_sleep);
+				}
 
 				break;
 

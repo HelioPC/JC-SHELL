@@ -11,6 +11,7 @@
     #define EXIT 0
     #define PATHNAME 1
     #define INT_CLEAR 64
+    #define THREAD_CREATE_FAILED 12
     #define STR_CLEAR "clear"
     #define NORM "\033[m"
     #define GREEN "\033[32m"
