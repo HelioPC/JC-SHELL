@@ -1,0 +1,14 @@
+fibonacci 4
+fibonacci 3000
+fibonacci 1000
+fibonacci 14000
+fibonacci 3000
+fibonacci 2000
+fibonacci 2000
+fibonacci 1000
+fibonacci 1200
+fibonacci 3000
+fibonacci 400
+fibonacci 300
+fibonacci 1200
+exit
