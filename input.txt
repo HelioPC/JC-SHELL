@@ -1,5 +1,13 @@
 fibonacci 4
-fibonacci 400009
-fibonacci 101111
-fibonacci 11
+fibnacci 20009
+fibonacci 10111
+
+fibonacci 11000
+fibonacci 1 4
+fibonacci 999
+
+fibonacci 10009
+div0
+fibonacci 1111
+fibonacci 11000
 exit

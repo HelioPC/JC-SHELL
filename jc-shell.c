@@ -14,6 +14,7 @@
 #include "commandlinereader.h"
 #include "ourheadfile.h"
 #include <semaphore.h>
+#include "list.h"
 
 #define MAXPAR 3
 #define BUFFERSIZE 100

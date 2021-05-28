@@ -1,65 +1,59 @@
 #include <sys/wait.h>
 #include <time.h>
-#include "ourheadfile.h"
+#include "list.h"
+#include <semaphore.h>
 
-LIST_PROC* process_new(){
-   LIST_PROC *ls;
-   ls = (LIST_PROC *) malloc(sizeof(LIST_PROC));
 
-   if(ls != NULL) ls->first = NULL;
+extern pthread_mutex_t mutex;
+extern int Exit;
+extern int numChildren;
+extern LIST_PROC *list;
+extern sem_t sem;
+extern sem_t sem_sleep;
 
-   return ls;
-}
+void* monitor_Thread(void *args){
+	int status, await;
 
-void process_destroy(LIST_PROC *ls){
-	PROCESS *proc, *nextproc;
-
-	proc = ls->first;
-	while (proc != NULL){
-		nextproc = proc->next;
-		free(proc);
-		proc = nextproc;
+	if(args != NULL){
+		printf("%sThis thread doesn't need any args. ", RED);
+		printf("Unexpected behavior is expected%s", NORM);
 	}
-	free(ls);
-}
 
-void insert_new_process(LIST_PROC *ls, int pid, time_t start_time){
-	PROCESS *proc;
+	/*this is the main loop*/
+	while(1){
+		pthread_mutex_lock(&mutex);
+		if(numChildren > 0){
+			pthread_mutex_unlock(&mutex);
+			/*waits the process in execution to terminate*/
+			await = wait(&status);
+			pthread_mutex_lock(&mutex);
+			update_terminated_process((LIST_PROC*)(list), await, status,
+			time(NULL));
+			(numChildren)--;
+			pthread_mutex_unlock(&mutex);
+			sem_post(&sem);
+			continue;
+		}
+		pthread_mutex_unlock(&mutex);
 
-	proc = (PROCESS *) malloc (sizeof(PROCESS));
-	proc->pid = pid;
-	proc->start_time=start_time;
-	proc->next = ls->first;
-	ls->first = proc;
-}
-
-void update_terminated_process(LIST_PROC *ls, int pid, int status,
-time_t end_time){
-	PROCESS *proc = ls->first;
-
-	while(proc != NULL && proc->pid != pid) proc = proc->next;
-	
-	if(proc == NULL) return;
-	
-	proc->status=status;
-	proc->end_time=end_time;
-}
-
-void process_print(LIST_PROC *ls){
-	PROCESS *proc;
-
-	printf("\nProcess list:\n");
-	proc = ls->first;
-	while (proc != NULL){
-		printf("%spid%s=%d%s\t", PURPLE, GREY, proc->pid, NORM);
-		printf("\t%sstatus%s=%d%s", PURPLE, GREY, proc->status/256, NORM);
-		printf("\t%sduration%s=%lds%s\n", PURPLE, GREY,
-		proc->end_time-proc->start_time, NORM);
-		proc = proc->next;
+		/*sleep for one second then continuos the cicle */
+		pthread_mutex_lock(&mutex);
+		if(Exit != 1){ /* Critical section*/
+			pthread_mutex_unlock(&mutex);
+			sem_wait(&sem_sleep);
+			continue;
+		}
+		pthread_mutex_unlock(&mutex);
+		
+		pthread_mutex_lock(&mutex);
+		if(Exit == 1 && (numChildren) == 0){
+			/* terminates the thread when there is no more task to wait for*/
+			pthread_mutex_unlock(&mutex);
+			pthread_exit(NULL);
+		}
+		pthread_mutex_unlock(&mutex);
 	}
-	printf("\n---- end of list. ----\n");
-}
-
+ }
 int command(char* cmd){ 
 	FILE *fp;
 	/* return EXIT command*/
