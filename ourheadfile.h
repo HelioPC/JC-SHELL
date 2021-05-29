@@ -13,16 +13,18 @@
     #define INT_CLEAR 64
     #define THREAD_CREATE_FAILED 12
     #define STR_CLEAR "clear"
-    #define NORM "\033[m"
-    #define GREEN "\033[32m"
-    #define BLUE "\033[36m"
-    #define D_BLUE "\033[34m"
-    #define PURPLE "\033[35m"
-    #define RED "\033[31m"
-    #define GREY "\033[37m"
     #define CLEAR() system(STR_CLEAR)
-    
-    
+
+    #ifndef __COLORS__
+        #define __COLORS__
+        #define NORM "\033[m"
+        #define GREEN "\033[32m"
+        #define BLUE "\033[36m"
+        #define D_BLUE "\033[34m"
+        #define PURPLE "\033[35m"
+        #define RED "\033[31m"
+        #define GREY "\033[37m"
+    #endif
 
     /* evaluates the command and returns its corresponding integer. */
     int command(char *);

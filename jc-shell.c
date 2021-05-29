@@ -29,10 +29,11 @@ sem_t sem;
 sem_t sem_sleep;
 
 int main(int argc, char **argv){
-	int pid, numargs;
+	int numargs;
 	char buffer[BUFFERSIZE];
 	char *argvector[VECTORSIZE];
 	void *result;
+	pid_t pid;
 	pthread_t monitorThread;
 
 	pthread_mutex_init(&mutex,NULL);
@@ -41,13 +42,14 @@ int main(int argc, char **argv){
 	
 	CLEAR();
 
-	if(argc > 1 || argv[1] != NULL)
-		puts("\033[31m\nThis program doesn't need any args\033[m\n");
-
 	numChildren=0;
 	list = process_new();
 
 	puts("\t\t\033[0;35mJC-SHELL V.1.2\033[0m\n");
+
+	if(argc > 1 || argv[1] != NULL)
+		puts("\033[31m\nThis program doesn't need any args\033[m\n");
+
 	puts("Insert your commands:");
 
 	/*Creates the monitor thread*/
@@ -64,14 +66,13 @@ int main(int argc, char **argv){
 
 		else if(numargs < 1) continue;
 
-		/*Examines the command*/
+		/* Examines the command */
 		switch(command(argvector[0])){
 			case EXIT:
 				/*Waits for the task monitors to finish before exit.*/
 
-				/*Critical section*/
 				pthread_mutex_lock(&mutex);
-				Exit = 1;
+				Exit = 1; /* Critical section */
 				pthread_mutex_unlock(&mutex);
 				pthread_join(monitorThread, &result);
 
@@ -91,21 +92,21 @@ int main(int argc, char **argv){
 			case PATHNAME:
 				sem_wait(&sem);
 
-				pid=fork();
+				pid = fork();
 
-				if(pid == -1){
+				if((int) pid == -1){
 					fprintf(stderr, "%sChild process creation failed.%s\n",
 					RED, NORM);
 					break;
 				}
 
-				else if(pid == 0) execv(argvector[0], argvector);
+				else if((int) pid == 0) execv(argvector[0], argvector);
 
 				else{
-					/*Critical section*/
 					pthread_mutex_lock(&mutex);
-					numChildren++;
+					numChildren++; /* Critical section */
 					insert_new_process(list, pid, time(NULL));
+					/*End of critical section*/
 					pthread_mutex_unlock(&mutex);
 					sem_post(&sem_sleep);
 				}

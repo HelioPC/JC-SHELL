@@ -1,4 +1,6 @@
 #include "list.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 LIST_PROC* process_new(){
    LIST_PROC *ls;
@@ -21,17 +23,17 @@ void process_destroy(LIST_PROC *ls){
 	free(ls);
 }
 
-void insert_new_process(LIST_PROC *ls, int pid, time_t start_time){
+void insert_new_process(LIST_PROC *ls, pid_t pid, time_t start_time){
 	PROCESS *proc;
 
 	proc = (PROCESS *) malloc (sizeof(PROCESS));
 	proc->pid = pid;
-	proc->start_time=start_time;
+	proc->start_time = start_time;
 	proc->next = ls->first;
 	ls->first = proc;
 }
 
-void update_terminated_process(LIST_PROC *ls, int pid, int status,
+void update_terminated_process(LIST_PROC *ls, pid_t pid, int status,
 time_t end_time){
 	PROCESS *proc = ls->first;
 
@@ -39,8 +41,8 @@ time_t end_time){
 	
 	if(proc == NULL) return;
 	
-	proc->status=status;
-	proc->end_time=end_time;
+	proc->status = status;
+	proc->end_time = end_time;
 }
 
 void process_print(LIST_PROC *ls){
@@ -49,10 +51,10 @@ void process_print(LIST_PROC *ls){
 	printf("\nProcess list:\n");
 	proc = ls->first;
 	while (proc != NULL){
-		printf("%spid%s=%d%s\t", PURPLE, GREY, proc->pid, NORM);
-		printf("\t%sstatus%s=%d%s", PURPLE, GREY, proc->status/256, NORM);
+		printf("%spid%s=%d%s\t", PURPLE, GREY, (int) proc->pid, NORM);
+		printf("\t%sstatus%s=%d%s", PURPLE, GREY, proc->status, NORM);
 		printf("\t%sduration%s=%lds%s\n", PURPLE, GREY,
-		proc->end_time-proc->start_time, NORM);
+		(long int) (proc->end_time - proc->start_time), NORM);
 		proc = proc->next;
 	}
 	printf("\n---- end of list. ----\n");

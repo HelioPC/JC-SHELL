@@ -1,19 +1,22 @@
 #ifndef __LIST_H__
     #define __LIST_H__
     #include <time.h>
-    #include "ourheadfile.h"
+    #include <sys/types.h>
 
-    #define NORM "\033[m"
-    #define GREEN "\033[32m"
-    #define BLUE "\033[36m"
-    #define D_BLUE "\033[34m"
-    #define PURPLE "\033[35m"
-    #define RED "\033[31m"
-    #define GREY "\033[37m"
+    #ifndef __COLORS__
+        #define __COLORS__
+        #define NORM "\033[m"
+        #define GREEN "\033[32m"
+        #define BLUE "\033[36m"
+        #define D_BLUE "\033[34m"
+        #define PURPLE "\033[35m"
+        #define RED "\033[31m"
+        #define GREY "\033[37m"
+    #endif
 
     /* Type to represent a process */
     typedef struct process{
-        int pid;    /* The process id */
+        pid_t pid;    /* The process id */
         int status; /* The process termination status */
         time_t start_time;  /* Initial process time */
         time_t end_time;    /* Final process time */
@@ -33,10 +36,10 @@
 
     /* insert_new_process - insert a new item with process id and its start
     time in list 'list' */
-    void insert_new_process(LIST_PROC *, int, time_t);
+    void insert_new_process(LIST_PROC *, pid_t, time_t);
 
     /* update_teminated_process - updates endtime of element with pid 'pid' */
-    void update_terminated_process(LIST_PROC *, int, int, time_t);
+    void update_terminated_process(LIST_PROC *, pid_t, int, time_t);
 
     /* process_print - print the content of list 'list' to standard output */
     void process_print(LIST_PROC *);
