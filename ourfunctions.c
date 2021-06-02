@@ -12,11 +12,13 @@ extern pthread_mutex_t mutex;
 extern sem_t sem;
 extern pthread_cond_t cond_var;
 extern LIST_PROC *list;
+extern REGARQ arq_info;
 
 /* Monitor thread - responsible for waiting for all child processes to be
 terminated */
 void* monitor_Thread(void *args){
 	int status, await;
+	time_t tmt;
 
 	if(args != NULL){
 		printf("%sThis thread doesn't need any args. ", RED);
@@ -31,11 +33,14 @@ void* monitor_Thread(void *args){
 		if(numChildren > 0){ /* Critical section */
 			pthread_mutex_unlock(&mutex);
 			await = wait(&status);
+			
 			pthread_mutex_lock(&mutex); /* Critical section */
 			update_terminated_process(list, await, WEXITSTATUS(status),
 			time(NULL));
 			numChildren--; /* End of critical section */
 			pthread_mutex_unlock(&mutex);
+			
+			filewrite(await, gettime(list, await));
 			sem_post(&sem);
 			continue;
 		}
@@ -60,12 +65,53 @@ void* monitor_Thread(void *args){
 	}
 }
 
+void filewrite(pid_t pid, time_t tm){
+	fseek(regfile, EOF, SEEK_END);
+
+	arq_info.totaltime += tm;
+
+	fprintf(regfile, "iteration %d\npid: %d execution time: %ld s\ntotal ex"
+	"ecution time: %ld s\n", ++arq_info.iternum, pid, tm, arq_info.totaltime);
+
+	return;
+}
+
+void fileload(){
+	int numlines = filelines(regfile);
+	int i=0, j;
+	char str[81];
+	char *elem;
+
+	while(i++ < numlines){
+		fgets(str, 80, regfile);
+		
+		if(i == (numlines - 2)){
+			elem = strtok(str, " ");
+			elem = strtok(NULL, " ");
+			
+			arq_info.iternum = atoi(elem);
+			continue;
+		}
+
+		if(i == numlines){
+			elem = strtok(str, " ");
+
+			for(j = 0; j < 3; j++){
+				elem = strtok(NULL, " ");
+			}
+
+			arq_info.totaltime = (time_t) atoi(elem);
+			break;
+		}
+	}
+}
+
 /* Command interpreter of jc-shell. */
 int command(char* cmd){ 
 	FILE *fp;
 
 	/* return EXIT command */
-	if(strcmp(cmd, "exit") == 0) return EXIT; 
+	if(strcmp(cmd, "exit") == 0) return EXIT;
 
 	/* return INT_CLEAR command */
 	else if(!strcmp(cmd, STR_CLEAR)) return INT_CLEAR;
@@ -77,4 +123,17 @@ int command(char* cmd){
 	}
 
 	else return -1;
+}
+
+int filelines(FILE *fp){
+	char info[80];
+	int cont = 0;
+
+	rewind(fp);
+
+	while((fgets(info, 79, fp) != NULL)) cont++;
+
+	rewind(fp);
+
+	return cont;
 }

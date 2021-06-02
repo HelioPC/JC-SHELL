@@ -12,6 +12,8 @@
     #define PATHNAME 1
     #define INT_CLEAR 64
     #define THREAD_CREATE_FAILED 12
+    #define W_TOTAL_TIME 59
+    #define W_NUM_ITER 31
     #define STR_CLEAR "clear"
     #define CLEAR() system(STR_CLEAR)
     #define OUTPUT_TXT "log.txt"
@@ -27,10 +29,25 @@
         #define RED "\033[31m"
         #define GREY "\033[37m"
     #endif
+    
+    /* this type represents all information for file */
+    typedef struct{
+        int iternum;
+        time_t totaltime;
+    } REGARQ;
 
     /* evaluates the command and returns its corresponding integer. */
     int command(char *);
 
     /* responsible thread to handle all the process deadline */
     void* monitor_Thread();
+
+    /* returns the number of lines in file */
+    int filelines(FILE *);
+
+    /*  */
+    void fileload();
+
+    /*  */
+    void filewrite(pid_t, time_t);
 #endif

@@ -28,6 +28,7 @@ sem_t sem;
 pthread_mutex_t mutex;
 pthread_cond_t cond_var;
 LIST_PROC *list;
+REGARQ arq_info;
 
 int main(int argc, char **argv){
 	int numargs;
@@ -52,6 +53,10 @@ int main(int argc, char **argv){
 	if(argc > 1 || argv[1] != NULL)
 		puts("\033[31m\nThis program doesn't need any args\033[m\n");
 
+	if(filelines(regfile) != 0) fileload();
+
+	else arq_info.iternum = -1;
+
 	puts("Insert your commands:");
 
 	/*Creates the monitor thread*/
@@ -72,7 +77,9 @@ int main(int argc, char **argv){
 		switch(command(argvector[0])){
 			case EXIT:
 				/*Waits for the task monitors to finish before exit.*/
-
+				
+				pthread_cond_signal(&cond_var);
+				
 				pthread_mutex_lock(&mutex);
 				Exit = 1; /* Critical section */
 				pthread_mutex_unlock(&mutex);
@@ -82,6 +89,7 @@ int main(int argc, char **argv){
 				process_destroy(list);
 				pthread_mutex_destroy(&mutex);
 				pthread_cond_destroy(&cond_var);
+				fclose(regfile);
 				fclose(stdin);
 				exit(EXIT_SUCCESS);
 				break;
@@ -91,7 +99,7 @@ int main(int argc, char **argv){
 				puts("\t\t\033[0;35mJC-SHELL V.1.2\033[0m\n");
 				break;
 
-			/*Creates a child process and execute the program*/
+			/* Creates a child process and execute the program */
 			case PATHNAME:
 				sem_wait(&sem);
 
@@ -106,12 +114,12 @@ int main(int argc, char **argv){
 				else if((int) pid == 0) execv(argvector[0], argvector);
 
 				else{
-					pthread_cond_signal(&cond_var);
 					pthread_mutex_lock(&mutex);
 					numChildren++; /* Critical section */
 					insert_new_process(list, pid, time(NULL));
 					/*End of critical section*/
 					pthread_mutex_unlock(&mutex);
+					pthread_cond_signal(&cond_var);
 				}
 
 				break;
