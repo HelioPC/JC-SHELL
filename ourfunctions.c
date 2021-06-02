@@ -5,12 +5,13 @@
 #include <semaphore.h>
 
 
-extern pthread_mutex_t mutex;
 extern int Exit;
 extern int numChildren;
-extern LIST_PROC *list;
+extern FILE *regfile;
+extern pthread_mutex_t mutex;
 extern sem_t sem;
-extern sem_t sem_sleep;
+extern pthread_cond_t cond_var;
+extern LIST_PROC *list;
 
 /* Monitor thread - responsible for waiting for all child processes to be
 terminated */
@@ -43,8 +44,8 @@ void* monitor_Thread(void *args){
 		/*sleep for one second then continuos the cicle */
 		pthread_mutex_lock(&mutex);
 		if(Exit != 1){ /* Critical section */
+			pthread_cond_wait(&cond_var, &mutex);
 			pthread_mutex_unlock(&mutex);
-			sem_wait(&sem_sleep);
 			continue;
 		}
 		pthread_mutex_unlock(&mutex);

@@ -16,17 +16,18 @@
 #include <semaphore.h>
 #include "list.h"
 
-#define MAXPAR 3
+#define MAXPAR 2
 #define BUFFERSIZE 100
 #define VECTORSIZE 7
 
 
-pthread_mutex_t mutex;
 int Exit;
 int numChildren;
-LIST_PROC *list;
+FILE *regfile;
 sem_t sem;
-sem_t sem_sleep;
+pthread_mutex_t mutex;
+pthread_cond_t cond_var;
+LIST_PROC *list;
 
 int main(int argc, char **argv){
 	int numargs;
@@ -36,9 +37,10 @@ int main(int argc, char **argv){
 	pid_t pid;
 	pthread_t monitorThread;
 
+	regfile = fopen(OUTPUT_TXT, READ_AND_WRITE);
 	pthread_mutex_init(&mutex,NULL);
+	pthread_cond_init(&cond_var, NULL);
 	sem_init(&sem, 0, MAXPAR);
-	sem_init(&sem_sleep, 0, 0);
 	
 	CLEAR();
 
@@ -79,6 +81,7 @@ int main(int argc, char **argv){
 				process_print(list);
 				process_destroy(list);
 				pthread_mutex_destroy(&mutex);
+				pthread_cond_destroy(&cond_var);
 				fclose(stdin);
 				exit(EXIT_SUCCESS);
 				break;
@@ -103,12 +106,12 @@ int main(int argc, char **argv){
 				else if((int) pid == 0) execv(argvector[0], argvector);
 
 				else{
+					pthread_cond_signal(&cond_var);
 					pthread_mutex_lock(&mutex);
 					numChildren++; /* Critical section */
 					insert_new_process(list, pid, time(NULL));
 					/*End of critical section*/
 					pthread_mutex_unlock(&mutex);
-					sem_post(&sem_sleep);
 				}
 
 				break;

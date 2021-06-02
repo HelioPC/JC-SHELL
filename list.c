@@ -59,3 +59,17 @@ void process_print(LIST_PROC *ls){
 	}
 	printf("\n---- end of list. ----\n");
 }
+
+time_t gettime(LIST_PROC *ls, pid_t pid){
+	PROCESS *proc = ls->first;
+
+	while(proc != NULL){
+		if(proc->pid == pid) break;
+
+		proc = proc->next;
+	}
+
+	if(proc == NULL) return (time_t) PIDNOTFOUND;
+
+	return (proc->end_time - proc->start_time);
+}

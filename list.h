@@ -14,6 +14,8 @@
         #define GREY "\033[37m"
     #endif
 
+    #define PIDNOTFOUND 142
+
     /* Type to represent a process */
     typedef struct process{
         pid_t pid;    /* The process id */
@@ -43,4 +45,7 @@
 
     /* process_print - print the content of list 'list' to standard output */
     void process_print(LIST_PROC *);
+
+    /* gettime - returns the execution time of a process */
+    time_t gettime(LIST_PROC *, pid_t);
 #endif

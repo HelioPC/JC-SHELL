@@ -14,6 +14,8 @@
     #define THREAD_CREATE_FAILED 12
     #define STR_CLEAR "clear"
     #define CLEAR() system(STR_CLEAR)
+    #define OUTPUT_TXT "log.txt"
+    #define READ_AND_WRITE "a+"
 
     #ifndef __COLORS__
         #define __COLORS__
