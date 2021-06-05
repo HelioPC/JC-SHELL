@@ -1,42 +1,48 @@
 iteration 0
-pid: 3235 execution time: 2 s
+pid: 5109 execution time: 2 s
 total execution time: 2 s
 iteration 1
-pid: 3236 execution time: 2 s
-total execution time: 4 s
+pid: 5110 execution time: 3 s
+total execution time: 5 s
 iteration 2
-pid: 3238 execution time: 2 s
-total execution time: 6 s
+pid: 5118 execution time: 2 s
+total execution time: 7 s
 iteration 3
-pid: 3237 execution time: 3 s
-total execution time: 9 s
+pid: 5117 execution time: 3 s
+total execution time: 10 s
 iteration 4
-pid: 3245 execution time: 3 s
-total execution time: 12 s
+pid: 5119 execution time: 3 s
+total execution time: 13 s
 iteration 5
-pid: 3246 execution time: 2 s
-total execution time: 14 s
-iteration 6
-pid: 3247 execution time: 2 s
+pid: 5120 execution time: 3 s
 total execution time: 16 s
+iteration 6
+pid: 5127 execution time: 3 s
+total execution time: 19 s
 iteration 7
-pid: 3291 execution time: 3 s
+pid: 5150 execution time: 0 s
 total execution time: 19 s
 iteration 8
-pid: 3290 execution time: 3 s
-total execution time: 22 s
+pid: 5152 execution time: 0 s
+total execution time: 19 s
 iteration 9
-pid: 3293 execution time: 3 s
-total execution time: 25 s
+pid: 5160 execution time: 0 s
+total execution time: 19 s
 iteration 10
-pid: 3292 execution time: 4 s
-total execution time: 29 s
+pid: 5231 execution time: 1 s
+total execution time: 20 s
 iteration 11
-pid: 3300 execution time: 4 s
-total execution time: 33 s
+pid: 5327 execution time: 0 s
+total execution time: 20 s
 iteration 12
-pid: 3301 execution time: 4 s
-total execution time: 37 s
+pid: 5398 execution time: 0 s
+total execution time: 20 s
 iteration 13
-pid: 3308 execution time: 3 s
-total execution time: 40 s
+pid: 5436 execution time: 1 s
+total execution time: 21 s
+iteration 14
+pid: 5444 execution time: 0 s
+total execution time: 21 s
+iteration 15
+pid: 5535 execution time: 0 s
+total execution time: 21 s

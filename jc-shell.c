@@ -31,14 +31,14 @@ LIST_PROC *list;
 REGARQ arq_info;
 
 int main(int argc, char **argv){
-	int numargs;
+	int numargs, numlines;
 	char buffer[BUFFERSIZE];
 	char *argvector[VECTORSIZE];
 	void *result;
 	pid_t pid;
 	pthread_t monitorThread;
 
-	regfile = fopen(OUTPUT_TXT, READ_AND_WRITE);
+	regfile = fopen(OUTPUT_TXT, READ_AND_APPEND);
 	pthread_mutex_init(&mutex,NULL);
 	pthread_cond_init(&cond_var, NULL);
 	sem_init(&sem, 0, MAXPAR);
@@ -53,9 +53,16 @@ int main(int argc, char **argv){
 	if(argc > 1 || argv[1] != NULL)
 		puts("\033[31m\nThis program doesn't need any args\033[m\n");
 
-	if(filelines(regfile) != 0) fileload();
+	numlines = filelines(regfile);
+	
+	if(numlines != 0 && numlines % 3 == 0 && fileload());
 
-	else arq_info.iternum = -1;
+	else{
+		fclose(regfile);
+		regfile = fopen(OUTPUT_TXT, READ_AND_WRITE);
+		arq_info.iternum = -1;
+		arq_info.totaltime = 0;
+	}
 
 	puts("Insert your commands:");
 

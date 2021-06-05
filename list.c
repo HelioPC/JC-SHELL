@@ -69,7 +69,7 @@ time_t gettime(LIST_PROC *ls, pid_t pid){
 		proc = proc->next;
 	}
 
-	if(proc == NULL) return (time_t) PIDNOTFOUND;
+	if(proc == NULL) return (time_t) -PIDNOTFOUND;
 
 	return (proc->end_time - proc->start_time);
 }

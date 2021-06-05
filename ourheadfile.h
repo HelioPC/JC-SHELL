@@ -3,6 +3,7 @@
     #include <stdlib.h>
     #include <stdio.h>
     #include <string.h>
+    #include <ctype.h>
     #include <sys/types.h>
     #include <unistd.h>
     #include <pthread.h>
@@ -17,7 +18,8 @@
     #define STR_CLEAR "clear"
     #define CLEAR() system(STR_CLEAR)
     #define OUTPUT_TXT "log.txt"
-    #define READ_AND_WRITE "a+"
+    #define READ_AND_APPEND "a+"
+    #define READ_AND_WRITE "w+"
 
     #ifndef __COLORS__
         #define __COLORS__
@@ -30,9 +32,9 @@
         #define GREY "\033[37m"
     #endif
     
-    /* this type represents all information for file */
+    /* this TDA represents all the information needed to write to the file. */
     typedef struct{
-        int iternum;
+        unsigned int iternum;
         time_t totaltime;
     } REGARQ;
 
@@ -45,9 +47,14 @@
     /* returns the number of lines in file */
     int filelines(FILE *);
 
-    /*  */
-    void fileload();
+    /* returns 1 if the global file has the necessary information,
+    otherwise returns 0. If they are valid, they are assigned to the global
+    data structure. */
+    int fileload();
 
-    /*  */
+    /* write all necessary information to the global file */
     void filewrite(pid_t, time_t);
+
+    /* return 1 if the string is a number else 0 */
+    int isnum(char *);
 #endif

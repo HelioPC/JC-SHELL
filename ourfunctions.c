@@ -14,11 +14,8 @@ extern pthread_cond_t cond_var;
 extern LIST_PROC *list;
 extern REGARQ arq_info;
 
-/* Monitor thread - responsible for waiting for all child processes to be
-terminated */
 void* monitor_Thread(void *args){
 	int status, await;
-	time_t tmt;
 
 	if(args != NULL){
 		printf("%sThis thread doesn't need any args. ", RED);
@@ -66,7 +63,7 @@ void* monitor_Thread(void *args){
 }
 
 void filewrite(pid_t pid, time_t tm){
-	fseek(regfile, EOF, SEEK_END);
+	fseek(regfile, 0, SEEK_END);
 
 	arq_info.totaltime += tm;
 
@@ -76,7 +73,7 @@ void filewrite(pid_t pid, time_t tm){
 	return;
 }
 
-void fileload(){
+int fileload(){
 	int numlines = filelines(regfile);
 	int i=0, j;
 	char str[81];
@@ -88,6 +85,8 @@ void fileload(){
 		if(i == (numlines - 2)){
 			elem = strtok(str, " ");
 			elem = strtok(NULL, " ");
+
+			if(!isnum(elem)) return 0;
 			
 			arq_info.iternum = atoi(elem);
 			continue;
@@ -100,13 +99,16 @@ void fileload(){
 				elem = strtok(NULL, " ");
 			}
 
+			if(!isnum(elem)) return 0;
+
 			arq_info.totaltime = (time_t) atoi(elem);
 			break;
 		}
 	}
+
+	return 1;
 }
 
-/* Command interpreter of jc-shell. */
 int command(char* cmd){ 
 	FILE *fp;
 
@@ -116,13 +118,13 @@ int command(char* cmd){
 	/* return INT_CLEAR command */
 	else if(!strcmp(cmd, STR_CLEAR)) return INT_CLEAR;
 
-	/* return PATHNAME when the pathfile is valid command */
+	/* returns PATHNAME if command is an executable file */
 	else if((fp=fopen(cmd, "rb")) != NULL){
 		fclose(fp);
 		return PATHNAME;
 	}
 
-	else return -1;
+	else return -1; /* invalid command */
 }
 
 int filelines(FILE *fp){
@@ -136,4 +138,16 @@ int filelines(FILE *fp){
 	rewind(fp);
 
 	return cont;
+}
+
+int isnum(char *str){
+	int i;
+	
+	if(str == NULL) return 0;
+
+	for(i = 0; (*(str+i) != '\0' && *(str+i) != '\n'); i++){
+		if(!isdigit(*(str+i))) return 0;
+	}
+
+	return 1;
 }
