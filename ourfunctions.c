@@ -43,15 +43,6 @@ void* monitor_Thread(void *args){
 		}
 		pthread_mutex_unlock(&mutex);
 
-		/*sleep for one second then continuos the cicle */
-		pthread_mutex_lock(&mutex);
-		if(Exit != 1){ /* Critical section */
-			pthread_cond_wait(&cond_var, &mutex);
-			pthread_mutex_unlock(&mutex);
-			continue;
-		}
-		pthread_mutex_unlock(&mutex);
-		
 		/* terminates the thread when there is no more task to wait for */
 		pthread_mutex_lock(&mutex);
 		if(Exit == 1 && (numChildren) == 0){ /* Critical section*/
@@ -59,6 +50,13 @@ void* monitor_Thread(void *args){
 			pthread_exit(NULL);
 		}
 		pthread_mutex_unlock(&mutex);
+
+		/*sleep for one second then continuos the cicle */
+		pthread_mutex_lock(&mutex);
+		while(Exit != 1 && (numChildren) == 0){ /* Critical section */
+			pthread_cond_wait(&cond_var, &mutex);
+			pthread_mutex_unlock(&mutex);
+		}
 	}
 }
 
