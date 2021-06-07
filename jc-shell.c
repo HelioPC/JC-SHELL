@@ -24,7 +24,6 @@
 int Exit;
 int numChildren;
 FILE *regfile;
-sem_t sem;
 pthread_mutex_t mutex;
 pthread_cond_t cond_var;
 pthread_cond_t cond_var_2;
@@ -43,7 +42,6 @@ int main(int argc, char **argv){
 	pthread_mutex_init(&mutex,NULL);
 	pthread_cond_init(&cond_var, NULL);
 	pthread_cond_init(&cond_var_2, NULL);
-	sem_init(&sem, 0, MAXPAR);
 	
 	CLEAR();
 
@@ -97,8 +95,8 @@ int main(int argc, char **argv){
 				process_print(list);
 				process_destroy(list);
 				pthread_mutex_destroy(&mutex);
-				sem_destroy(&sem);
 				pthread_cond_destroy(&cond_var);
+				pthread_cond_destroy(&cond_var_2);
 				fclose(regfile);
 				fclose(stdin);
 				exit(EXIT_SUCCESS);

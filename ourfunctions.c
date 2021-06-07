@@ -9,7 +9,6 @@ extern int Exit;
 extern int numChildren;
 extern FILE *regfile;
 extern pthread_mutex_t mutex;
-extern sem_t sem;
 extern pthread_cond_t cond_var;
 extern pthread_cond_t cond_var_2;
 extern LIST_PROC *list;
