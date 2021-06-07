@@ -27,6 +27,7 @@ FILE *regfile;
 sem_t sem;
 pthread_mutex_t mutex;
 pthread_cond_t cond_var;
+pthread_cond_t cond_var_2;
 LIST_PROC *list;
 REGARQ arq_info;
 
@@ -41,6 +42,7 @@ int main(int argc, char **argv){
 	regfile = fopen(OUTPUT_TXT, READ_AND_APPEND);
 	pthread_mutex_init(&mutex,NULL);
 	pthread_cond_init(&cond_var, NULL);
+	pthread_cond_init(&cond_var_2, NULL);
 	sem_init(&sem, 0, MAXPAR);
 	
 	CLEAR();
@@ -95,6 +97,7 @@ int main(int argc, char **argv){
 				process_print(list);
 				process_destroy(list);
 				pthread_mutex_destroy(&mutex);
+				sem_destroy(&sem);
 				pthread_cond_destroy(&cond_var);
 				fclose(regfile);
 				fclose(stdin);
@@ -108,7 +111,9 @@ int main(int argc, char **argv){
 
 			/* Creates a child process and execute the program */
 			case PATHNAME:
-				sem_wait(&sem);
+				pthread_mutex_lock(&mutex);
+				while(numChildren == MAXPAR) pthread_cond_wait(&cond_var_2, &mutex);
+				pthread_mutex_unlock(&mutex);
 
 				pid = fork();
 

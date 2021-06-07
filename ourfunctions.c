@@ -11,6 +11,7 @@ extern FILE *regfile;
 extern pthread_mutex_t mutex;
 extern sem_t sem;
 extern pthread_cond_t cond_var;
+extern pthread_cond_t cond_var_2;
 extern LIST_PROC *list;
 extern REGARQ arq_info;
 
@@ -38,7 +39,7 @@ void* monitor_Thread(void *args){
 			pthread_mutex_unlock(&mutex);
 			
 			filewrite(await, gettime(list, await));
-			sem_post(&sem);
+			pthread_cond_signal(&cond_var_2);
 			continue;
 		}
 		pthread_mutex_unlock(&mutex);
