@@ -3,28 +3,48 @@
     #include <stdlib.h>
     #include <stdio.h>
     #include <string.h>
+    #include <errno.h>
     #include <ctype.h>
     #include <sys/types.h>
     #include <unistd.h>
     #include <pthread.h>
+
+    #define VERSION "V.1.5.2"
    
+    #define MAX_TER 10
+
     #define TRUE 1
-    #define EXIT 0
+    #define EXIT 2
+    #define EXIT_GLOBAL 3
     #define PATHNAME 1
     #define INT_CLEAR 64
-    #define THREAD_CREATE_FAILED 12
+    #define STATS 41
+    #define PID 73
+    #define BUFFERSIZE 100
+    #define VECTORSIZE 7
+    #define FILENAMESIZE 27
+    #define THREAD_CREATE_FAILED 162
+    #define FILE_CREATE_FAILED 155
+    #define OPEN_FILE_FAILED 171
     #define W_TOTAL_TIME 59
     #define W_NUM_ITER 31
     #define STR_CLEAR "clear"
-    #define CLEAR() system(STR_CLEAR)
+    #define CMD_EXIT "exit"
+    #define CMD_STATS "stats"
+    #define CMD_EXIT_GLOBAL "exit-global"
     #define OUTPUT_TXT "log.txt"
     #define READ_AND_APPEND "a+"
     #define READ_AND_WRITE "w+"
+    #define NAMED_PIPE "jcshell-in"
+    #define NAMED_PIPE_AUX "stats-in"
+    #define NAMED_PIPE_REG "reg-in"
+    #define CLEAR() system(STR_CLEAR)
 
     #ifndef __COLORS__
         #define __COLORS__
         #define NORM "\033[m"
         #define GREEN "\033[32m"
+        #define YELLOW "\033[33m"
         #define BLUE "\033[36m"
         #define D_BLUE "\033[34m"
         #define PURPLE "\033[35m"
@@ -57,4 +77,5 @@
 
     /* return 1 if the string is a number else 0 */
     int isnum(char *);
+
 #endif

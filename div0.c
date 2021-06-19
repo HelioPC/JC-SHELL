@@ -1,13 +1,23 @@
 #include <stdio.h>
+#include <string.h>
+#include <unistd.h>
 
-int main (){
-    int a,b,c;
+int main(){
+    char s1[20];
+    char *s2 = "exit";
 
-    a=5;
-    b=0;
-    c =(a/b);
+    fgets(s1, 20, stdin);
 
-    printf("c = %d\n ",c );
+    if(strcmp(s1, "exit\n") == 0){
+        sprintf(s1, "exit-%d", getpid());
+    }
+
+    if(strstr(s1, s2) != NULL){
+        printf("%s\n", strlen(s1) > 6 ? s1 : s2);
+    }
+    
+    printf("c = %ld\n ", strlen(s1));
+    printf("pid = %s", (s1+5));
 
     return 0;
 }

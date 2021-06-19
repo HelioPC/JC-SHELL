@@ -1,6 +1,8 @@
 #include "list.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 LIST_PROC* process_new(){
    LIST_PROC *ls;
@@ -29,6 +31,7 @@ void insert_new_process(LIST_PROC *ls, pid_t pid, time_t start_time){
 	proc = (PROCESS *) malloc (sizeof(PROCESS));
 	proc->pid = pid;
 	proc->start_time = start_time;
+	proc->end_time = (time_t) -1;
 	proc->next = ls->first;
 	ls->first = proc;
 }
@@ -72,4 +75,19 @@ time_t gettime(LIST_PROC *ls, pid_t pid){
 	if(proc == NULL) return (time_t) -PIDNOTFOUND;
 
 	return (proc->end_time - proc->start_time);
+}
+
+void unfinished(LIST_PROC *ls, int fd){
+	int buffersize = 80;
+	char buffer[buffersize];
+	PROCESS *proc = ls->first;
+
+	while(proc != NULL){
+		if(proc->end_time == (time_t) -1){
+			sprintf(buffer, "pid=%d\n", proc->pid);
+			write(fd, buffer, strlen(buffer));
+		}
+
+		proc = proc->next;
+	}
 }
