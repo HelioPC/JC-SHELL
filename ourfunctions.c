@@ -10,7 +10,8 @@ int command(char* cmd){
 	else if(!strcmp(cmd, STR_CLEAR)) return INT_CLEAR;
 
 	/* return stats command */
-	else if(!strcmp(cmd, CMD_STATS)) return STATS;
+	else if(strstr(cmd, CMD_STATS) != NULL)
+		return strlen(cmd) > 10 ? STATS : -1;
 
 	/* returns PATHNAME if command is an executable file */
 	else if((fp=fopen(cmd, "rb")) != NULL){
@@ -31,6 +32,18 @@ int isnum(char *str){
 
 	for(i = 0; (*(str+i) != '\0' && *(str+i) != '\n'); i++){
 		if(!isdigit(*(str+i))) return 0;
+	}
+
+	return 1;
+}
+
+int strdel(char *str){
+	int i;
+	
+	if(str == NULL) return 0;
+
+	for(i = 0; *(str+i) != '\0'; i++){
+		str[i] = '\0';
 	}
 
 	return 1;

@@ -1,3 +1,18 @@
 iteration 0
-pid: 7032 execution time: 0 s
-total execution time: 0 s
+pid: 14585 execution time: 29 s
+total execution time: 29 s
+iteration 1
+pid: 14583 execution time: 56 s
+total execution time: 85 s
+iteration 2
+pid: 14836 execution time: 47 s
+total execution time: 132 s
+iteration 3
+pid: 15041 execution time: 51 s
+total execution time: 183 s
+iteration 4
+pid: 16400 execution time: 55 s
+total execution time: 238 s
+iteration 5
+pid: 16404 execution time: 54 s
+total execution time: 292 s

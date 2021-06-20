@@ -51,7 +51,7 @@ time_t end_time){
 void process_print(LIST_PROC *ls){
 	PROCESS *proc;
 
-	printf("\nProcess list:\n");
+	printf("\n---- Processes list: ----\n");
 	proc = ls->first;
 	while (proc != NULL){
 		printf("%spid%s=%d%s\t", PURPLE, GREY, (int) proc->pid, NORM);
@@ -84,7 +84,7 @@ void unfinished(LIST_PROC *ls, int fd){
 
 	while(proc != NULL){
 		if(proc->end_time == (time_t) -1){
-			sprintf(buffer, "pid=%d\n", proc->pid);
+			sprintf(buffer, "%spid%s=%d\n", PURPLE, NORM, proc->pid);
 			write(fd, buffer, strlen(buffer));
 		}
 

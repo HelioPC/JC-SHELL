@@ -68,7 +68,7 @@ int exitterminal(char *args){
 
     if(!isinlistterm(lsterms, pid)) return 0;
 	
-	if(kill(pid, SIGINT) < 0) return 0;
+	if(kill(pid, SIGTERM) < 0) return 0;
 
     if(!remove_terminal_id(lsterms, pid)) return 0;
 

@@ -40,7 +40,7 @@ LISTTERMS *lsterms;
 struct sigaction sact, old;
 
 int main(int argc, char **argv){
-	int numargs, numlines, fdin, fdproc;
+	int numargs, numlines, fdin, fdproc, fdstats;
 	char buffer[BUFFERSIZE];
 	char *argvector[VECTORSIZE];
 	char filename[FILENAMESIZE];
@@ -54,6 +54,12 @@ int main(int argc, char **argv){
 	sact.sa_flags = 0;
 	
 	sigaction(SIGINT, &sact, NULL);
+
+	if(access(TMP_DIR, F_OK))
+		if(mkdir(TMP_DIR, S_IRWXU | S_IRWXG | S_IRWXO)){
+			perror("\033[31mCould not create default temporary directory.");
+			exit(FILE_CREATE_FAILED);
+		}
 
 	regfile = fopen(OUTPUT_TXT, READ_AND_APPEND);
 
@@ -69,8 +75,8 @@ int main(int argc, char **argv){
     }
 
 	if(mkfifo(NAMED_PIPE, S_IRUSR | S_IWUSR) < 0){
-		perror("\033[31mError opening the fifo");
-		exit(EXIT_FAILURE);
+		perror("\033[31mError creating FIFO.");
+		exit(ENOENT);
 	}
 
 	CLEAR();
@@ -138,22 +144,32 @@ int main(int argc, char **argv){
 
 		/* Examines the command */
 		switch(command(argvector[0])){
-			case PID:
+			case STATS:
+				if((fdstats = open(buffer, O_WRONLY, S_IRUSR | S_IWUSR)) < 0){
+					perror("\033[31mCouldn\'t open stats pipe");
+					exit(OPEN_FILE_FAILED);
+				}
+
+				unfinished(list, fdstats);
+
+				close(fdstats);
+
 				break;
 
 			case EXIT_GLOBAL:
 				/*Waits for the task monitors to finish before exit.*/
 
-				exitall(SIGINT);
-				
-				pthread_cond_signal(&cond_var);
+				exitall(SIGTERM);
 				
 				pthread_mutex_lock(&mutex);
 				exit1 = 1; /* Critical section */
 				pthread_mutex_unlock(&mutex);
-				pthread_mutex_lock(&mutex);
+
+				pthread_cond_signal(&cond_var);
+
+				pthread_mutex_lock(&mutex2);
 				exit2 = 1; /* Critical section */
-				pthread_mutex_unlock(&mutex);
+				pthread_mutex_unlock(&mutex2);
 				pthread_join(monitorThread, &result);
 				pthread_join(terminalThread, &result2);
 

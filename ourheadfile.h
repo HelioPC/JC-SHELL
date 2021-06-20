@@ -10,9 +10,8 @@
     #include <pthread.h>
 
     #define VERSION "V.1.5.2"
+    #define VERSION_TERM "V.1.2"
    
-    #define MAX_TER 10
-
     #define TRUE 1
     #define EXIT 2
     #define EXIT_GLOBAL 3
@@ -23,11 +22,14 @@
     #define BUFFERSIZE 100
     #define VECTORSIZE 7
     #define FILENAMESIZE 27
-    #define THREAD_CREATE_FAILED 162
-    #define FILE_CREATE_FAILED 155
-    #define OPEN_FILE_FAILED 171
-    #define W_TOTAL_TIME 59
-    #define W_NUM_ITER 31
+
+    #ifndef __OUR_ERRNO__
+        #define __OUR_ERRNO__
+        #define THREAD_CREATE_FAILED 162 /* Failed to create a POSIX thread */
+        #define FILE_CREATE_FAILED 155 /* Failed to create a file */
+        #define OPEN_FILE_FAILED 171 /* Failed to open a file */
+    #endif
+
     #define STR_CLEAR "clear"
     #define CMD_EXIT "exit"
     #define CMD_STATS "stats"
@@ -35,9 +37,10 @@
     #define OUTPUT_TXT "log.txt"
     #define READ_AND_APPEND "a+"
     #define READ_AND_WRITE "w+"
+    #define TMP_DIR "/tmp/.jcshell"
     #define NAMED_PIPE "jcshell-in"
-    #define NAMED_PIPE_AUX "stats-in"
-    #define NAMED_PIPE_REG "reg-in"
+    #define NAMED_PIPE_AUX "/tmp/.jcshell/stats-"
+    #define NAMED_PIPE_REG "/tmp/.jcshell/reg-in"
     #define CLEAR() system(STR_CLEAR)
 
     #ifndef __COLORS__
@@ -77,5 +80,8 @@
 
     /* return 1 if the string is a number else 0 */
     int isnum(char *);
+
+    /* erase the string str */
+    int strdel(char *);
 
 #endif
