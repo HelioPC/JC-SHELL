@@ -22,6 +22,8 @@ int command(char* cmd){
 	/* return EXIT command */
 	else if(strstr(cmd, CMD_EXIT) != NULL) return strlen(cmd) > 6 ? EXIT : -1;
 
+	/* MORE COMMANDS SHOULD BE ADDED HERE. */
+
 	else return -1; /* invalid command */
 }
 
@@ -47,4 +49,13 @@ int strdel(char *str){
 	}
 
 	return 1;
+}
+
+int stats(int fd, int totaltm, int totalprocs){
+	char str[BUFFERSIZE];
+
+	sprintf(str, "\n%sTotal execution time%s: %ds%s\nNumber of active process"
+	"es%s: %d\n\n", PURPLE, NORM, totaltm, PURPLE, NORM, totalprocs);
+	
+	return (int) write(fd, str, strlen(str));
 }

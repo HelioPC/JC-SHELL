@@ -9,8 +9,8 @@
     #include <unistd.h>
     #include <pthread.h>
 
-    #define VERSION "V.1.5.2"
-    #define VERSION_TERM "V.1.2"
+    #define VERSION "V.1.5.3"
+    #define VERSION_TERM "V.2.0"
    
     #define TRUE 1
     #define EXIT 2
@@ -83,5 +83,10 @@
 
     /* erase the string str */
     int strdel(char *);
+
+    /* Writes the number of unfinished processes and the total execution time
+    of all processes in the file descriptor.
+    On sucess returns 1, otherwise returns 0.*/
+    int stats(int, int, int);
 
 #endif

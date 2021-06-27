@@ -99,7 +99,7 @@ int main(int argc, char **argv){
 
             strdel(buffer);
 
-            while(read(fdin, buffer, 25) > 0) printf("%s", buffer);
+            while(read(fdin, buffer, BUFFERSIZE) > 0) printf("%s", buffer);
 
             close(fdin);
         }

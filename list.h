@@ -49,6 +49,6 @@
     /* gettime - returns the execution time of a process */
     time_t gettime(LIST_PROC *, pid_t);
 
-    /* writes all unfinished processes to file descriptor */
-    void unfinished(LIST_PROC *, int);
+    /* returns the number of unfinished processes */
+    int unfinished(LIST_PROC *);
 #endif

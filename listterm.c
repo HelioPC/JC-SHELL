@@ -43,8 +43,8 @@ void *regTerminalThread(){
             }
 
             tam = listtermtam(lsterms);
-            printf("\n%s1 terminal registrado. %d termina%s ativo%s%s\n",
-            YELLOW, tam, tam > 1 ? "is" : "l", tam > 1 ? "s" : "", NORM);
+            printf("\n%s1 registered terminal. %d active terminal%s.%s\n",
+            YELLOW, tam, tam > 1 ? "s" : "", NORM);
 
             pthread_mutex_unlock(&mutex2);
 

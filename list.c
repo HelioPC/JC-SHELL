@@ -77,17 +77,15 @@ time_t gettime(LIST_PROC *ls, pid_t pid){
 	return (proc->end_time - proc->start_time);
 }
 
-void unfinished(LIST_PROC *ls, int fd){
-	int buffersize = 80;
-	char buffer[buffersize];
+int unfinished(LIST_PROC *ls){
+	int cont=0;
 	PROCESS *proc = ls->first;
 
 	while(proc != NULL){
-		if(proc->end_time == (time_t) -1){
-			sprintf(buffer, "%spid%s=%d\n", PURPLE, NORM, proc->pid);
-			write(fd, buffer, strlen(buffer));
-		}
+		if(proc->end_time == (time_t) -1) cont++;
 
 		proc = proc->next;
 	}
+	
+	return cont;
 }

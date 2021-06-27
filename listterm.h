@@ -18,31 +18,33 @@
         REGTER *first;
     } LISTTERMS;
 
-    /* responsible thread to handle all the process terminal */
+    /* thread responsible for registering all jcshell-terminal that open the 
+    named pipe. */
     void* regTerminalThread();
 
-    /**/
+    /* Sends a signal to a jcshell-terminal specified by string. */
     int exitterminal(char *);
 
-    /**/
+    /* Sends a interrupt signal to all active jcshell-terminal. */
     int exitall(int);
 
-    /**/
+    /* Insert the pid of a jchell-terminal on the linked list of terminals */
     int insert_new_terminal_id(LISTTERMS *, unsigned int);
 
-    /**/
+    /* Creates a linked list of terminals. */
     LISTTERMS *listterm_init();
 
-    /**/
+    /* Remove the pid of a jcshell-terminal from the linked list. */
     int remove_terminal_id(LISTTERMS *, unsigned int);
 
-    /**/
+    /* Frees the space allocated to the linked list and its nodes. */
     void freelsterm(LISTTERMS *);
 
-    /**/
+    /* Checks if the pid exists in the linked list of terminals, if so it
+    returns 1, otherwise 0. */
     int isinlistterm(LISTTERMS *, unsigned int);
 
-    /**/
+    /* Returns the number of nodes in the linked list of terminals. */
     int listtermtam(LISTTERMS *);
 
 #endif

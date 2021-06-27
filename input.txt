@@ -6,4 +6,4 @@ fibonacci 20921
 fibonacci 10101
 fibonacci 26303
 fibonacci 1092
-exit
+exit-global
