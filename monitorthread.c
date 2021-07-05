@@ -1,7 +1,8 @@
 #include <sys/wait.h>
 #include <time.h>
-#include "list.h"
-#include "ourheadfile.h"
+#include "headers/list.h"
+#define __FILE_FUNCS__
+#include "headers/ourheadfile.h"
 #include <fcntl.h>
 #include <sys/stat.h>
 

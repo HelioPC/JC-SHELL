@@ -1,26 +1,48 @@
 /*
-*Fase nº5 of JC-SHELL
-*Developed by group nº02
+*****************************************************************************
+	OPERATING SYSTEMS PROJECT (COMPUTER SCIENCE - 2nd YEAR)
+*****************************************************************************
+		PROJECT:				JCShell
+		NAME:               	JCShell
+       	DEVELOPED BY:			GROUP Nº02 (DEI-CC/FC/UAN 2020)
+       	WRITTEN IN:         	C Language
+       	FOR:               		UNIX
+       	STABLE VERSION:     	V.1.5.7
+       	TEACHER:            	Msc. JOÃO COSTA
+       	YEAR:                	20/04/2021 - 06/07/2021
+*****************************************************************************
+       AGOSTINHO NETO UNIVERSITY
+       FACULTY OF SCIENCES
+       DEPARTMENT OF COMPUTER SCIENCES
 
-*ELIÚDE PATRÍCIO DE CARVALHO VEMBA - (ID Github) HelioPC
-*LUDMILO HUEBA CAMBAMBI - (ID Github) Ludmilo-cambambi
-*PEDRO MANUEL DOMINGOS - (ID Github) pedro7-7-7
-*LUCÍLIO TÉRCIO GOMES - (ID Github) luciliogomez
+		GROUP Nº02:
+				- ELIÚDE PATRÍCIO DE CARVALHO VEMBA - (ID Github) HelioPC
+				- LUDMILO HUEBA CAMBAMBI - (ID Github) Ludmilo-cambambi
+				- PEDRO MANUEL DOMINGOS - (ID Github) pedro7-7-7
+				- LUCÍLIO TÉRCIO GOMES - (ID Github) luciliogomez
+*****************************************************************************
 */
 
 #include <sys/wait.h>
 #include <sys/stat.h>
 #include <time.h>
-#include "commandlinereader.h"
-#include "ourheadfile.h"
+#include "headers/commandlinereader.h"
+#define __CONST__
+#define __FILE_PIPE__
+#define __MNT_THREAD__
+#define __FILE_FUNCS__
+#include "headers/ourheadfile.h"
 #include <fcntl.h>
 #define __USE_POSIX 1
 #define __USE_XOPEN_EXTENDED
 #include <signal.h>
-#include "list.h"
-#include "listterm.h"
+#include "headers/list.h"
+#define __REG_THREAD__
+#include "headers/listterm.h"
 
 #define MAXPAR 4
+
+extern int errno;
 
 void sighandler(int);
 
@@ -66,6 +88,8 @@ int main(int argc, char **argv){
 	pthread_t monitorThread; /* Monitor thread ID. */
 	pthread_t terminalThread; /* Terminal thread ID. */
 
+	errno = 0;
+
 	sact.sa_handler = sighandler; /* Function that handles the signal. */
 	sigemptyset(&sact.sa_mask);
 	sact.sa_flags = 0;
@@ -77,7 +101,7 @@ int main(int argc, char **argv){
 	if(access(TMP_DIR, F_OK))
 		if(mkdir(TMP_DIR, S_IRWXU | S_IRWXG | S_IRWXO)){
 			perror("\033[31mCould not create default temporary directory.");
-			exit(FILE_CREATE_FAILED);
+			exit(errno);
 		}
 
 	regfile = fopen(OUTPUT_TXT, READ_AND_APPEND);
@@ -91,14 +115,15 @@ int main(int argc, char **argv){
 
 	/* If the named pipe exists, ends with error. */
 	if(!access(NAMED_PIPE, F_OK)){
-        perror("\033[31mNamed pipe \"jcshell-in\" not cleared");
-        exit(ENOENT);
-    }
+		errno = EEXIST;
+		perror("\033[31mNamed pipe \"jcshell-in\" not erased\033[m");
+		exit(errno);
+	}
 
 	/* Creates the named pipe. */
 	if(mkfifo(NAMED_PIPE, S_IRUSR | S_IWUSR) < 0){
 		perror("\033[31mError creating FIFO.");
-		exit(ENOENT);
+		exit(errno);
 	}
 
 	CLEAR();
@@ -128,19 +153,19 @@ int main(int argc, char **argv){
 	/* Creates the monitor thread */
 	if(pthread_create(&monitorThread, NULL, monitor_Thread, NULL) < 0){
 			puts("\033[31mError creating monitor thread\033[m");
-			exit(THREAD_CREATE_FAILED);
+			exit(errno);
 	}
 
 	/* Creates the terminal thread */
 	if(pthread_create(&terminalThread, NULL, regTerminalThread, NULL) < 0){
 			puts("\033[31mError creating terminals handling thread\033[m");
-			exit(THREAD_CREATE_FAILED);
+			exit(errno);
 	}
 
 	/* Opens the named pipe. */
 	if((fdin = open(NAMED_PIPE, O_RDONLY | O_NONBLOCK, S_IRUSR)) < 0){
-		perror("\033[31mCouldn\'t open named pipe \"jcshell-in\"");
-		exit(OPEN_FILE_FAILED);
+		perror("\033[31mCouldn\'t open named pipe \"jcshell-in\"\033[m");
+		exit(errno);
 	}
 
 	/* Redirects standard input (keyboard) to the named pipe. */
@@ -168,13 +193,21 @@ int main(int argc, char **argv){
 
 		/* Examines the command */
 		switch(command(argvector[0])){
+			case LS:
+				CLEAR();
+				printf("\t\t%sJC-SHELL %s%s\n", PURPLE, VERSION, NORM);
+				ls();
+				break;
+
 			case STATS:
 				if((fdstats = open(buffer, O_WRONLY, S_IRUSR | S_IWUSR)) < 0){
-					perror("\033[31mCouldn\'t open stats pipe");
-					exit(OPEN_FILE_FAILED);
+					perror("\033[31mCouldn\'t open stats pipe\033[m");
+					exit(errno);
 				}
 
+				pthread_mutex_lock(&mutex);
 				stats(fdstats, arq_info.totaltime, unfinished(list));
+				pthread_mutex_unlock(&mutex);
 
 				close(fdstats);
 
@@ -262,8 +295,9 @@ int main(int argc, char **argv){
 					sprintf(filename, "jcshell-out-%d.txt", (int) getpid());
 
 					if((fdproc = open(filename, O_CREAT | O_WRONLY | O_TRUNC,
-					S_IRUSR | S_IWUSR)) == -1) exit(FILE_CREATE_FAILED);
+					S_IRUSR | S_IWUSR)) == -1) exit(errno);
 
+					dup2(fdproc, STDERR_FILENO);
 					dup2(fdproc, STDOUT_FILENO);
 
 					execv(argvector[0], argvector);

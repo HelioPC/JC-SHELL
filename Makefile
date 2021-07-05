@@ -9,19 +9,19 @@ jc-shell: jc-shell.o commandlinereader.o ourfunctions.o list.o files.o monitorth
 jcshell-terminal: jcshell-terminal.o ourfunctions.o
 	gcc -o jcshell-terminal jcshell-terminal.o ourfunctions.o
 
-commandlinereader.o: commandlinereader.h
+commandlinereader.o: headers/commandlinereader.h
 	gcc $(CFLAGS) commandlinereader.c
 
-jc-shell.o: jc-shell.c ourheadfile.h commandlinereader.h list.h listterm.h
+jc-shell.o: jc-shell.c headers/ourheadfile.h headers/commandlinereader.h headers/list.h headers/listterm.h
 	gcc $(CFLAGS) jc-shell.c
 
-jcshell-terminal.o: jcshell-terminal.c ourheadfile.h
+jcshell-terminal.o: jcshell-terminal.c headers/ourheadfile.h
 	gcc $(CFLAGS) jcshell-terminal.c
 
-list.o: list.c list.h
+list.o: list.c headers/list.h
 	gcc $(CFLAGS) list.c
 
-ourfunctions.o: ourfunctions.c ourheadfile.h list.h
+ourfunctions.o: ourfunctions.c headers/ourheadfile.h headers/list.h
 	gcc $(CFLAGS) ourfunctions.c
 
 monitorthread.o: monitorthread.c
@@ -30,7 +30,7 @@ monitorthread.o: monitorthread.c
 files.o: files.c
 	gcc $(CFLAGS) files.c
 
-listterm.o: listterm.c listterm.h
+listterm.o: listterm.c headers/listterm.h
 	gcc $(CFLAGS) -D_POSIX_C_SOURCE listterm.c
 
 div0: div0.o

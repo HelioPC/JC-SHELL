@@ -1,10 +1,15 @@
-#include "ourheadfile.h"
+#include <dirent.h>
+#define __CONST__
+#include "headers/ourheadfile.h"
 
-int command(char* cmd){ 
+int command(char* cmd){
 	FILE *fp;
 
 	/* return EXIT_GLOBAL command */
 	if(!strcmp(cmd, CMD_EXIT_GLOBAL)) return EXIT_GLOBAL;
+
+	/* return LS command */
+	if(!strcmp(cmd, CMD_LS)) return LS;
 
 	/* return INT_CLEAR command */
 	else if(!strcmp(cmd, STR_CLEAR)) return INT_CLEAR;
@@ -58,4 +63,29 @@ int stats(int fd, int totaltm, int totalprocs){
 	"es%s: %d\n\n", PURPLE, NORM, totaltm, PURPLE, NORM, totalprocs);
 	
 	return (int) write(fd, str, strlen(str));
+}
+
+void ls(){
+	int cont = 0, i, j;
+	char *argve[FILENAME_MAX];
+	DIR *dir;
+    struct dirent *lsdir;
+
+    dir = opendir(".");
+
+    if(dir == NULL) exit(EXIT_FAILURE);
+
+    while((lsdir = readdir(dir)) != NULL && cont != FILENAME_MAX){
+		argve[cont++] = lsdir->d_name;
+	}
+
+    putchar('\n');
+	for(i=0; i < cont; i+=2){
+		j = strlen(argve[i]) / 8;
+        printf("%s%s", YELLOW_A, argve[i]);
+        for(; j < 5; j++) putchar('\t');
+        printf("%s%s%s\n", GREEN_A, (i+1) < cont ? argve[i+1] : "", NORM);
+    }
+
+    closedir(dir);
 }

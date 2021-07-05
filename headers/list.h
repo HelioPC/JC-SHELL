@@ -1,18 +1,19 @@
+/*
+*Linked list of processes interface used by the JCShell project (header file).
+*
+*Developed by group nº02
+*
+*ELIÚDE PATRÍCIO DE CARVALHO VEMBA - (ID Github) HelioPC
+*LUDMILO HUEBA CAMBAMBI - (ID Github) Ludmilo-cambambi
+*PEDRO MANUEL DOMINGOS - (ID Github) pedro7-7-7
+*LUCÍLIO TÉRCIO GOMES - (ID Github) luciliogomez
+*/
+
 #ifndef __LIST_H__
     #define __LIST_H__
     #include <time.h>
     #include <sys/types.h>
-
-    #ifndef __COLORS__
-        #define __COLORS__
-        #define NORM "\033[m"
-        #define GREEN "\033[32m"
-        #define BLUE "\033[36m"
-        #define D_BLUE "\033[34m"
-        #define PURPLE "\033[35m"
-        #define RED "\033[31m"
-        #define GREY "\033[37m"
-    #endif
+    #include "color.h"
 
     #define PIDNOTFOUND 142
 

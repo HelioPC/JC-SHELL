@@ -1,3 +1,14 @@
+/*
+*Linked list of terminals interface used by the JCShell project (header file).
+*
+*Developed by group nº02
+*
+*ELIÚDE PATRÍCIO DE CARVALHO VEMBA - (ID Github) HelioPC
+*LUDMILO HUEBA CAMBAMBI - (ID Github) Ludmilo-cambambi
+*PEDRO MANUEL DOMINGOS - (ID Github) pedro7-7-7
+*LUCÍLIO TÉRCIO GOMES - (ID Github) luciliogomez
+*/
+
 #ifndef __TERM_H__
     #define __TERM_H__
 
@@ -18,9 +29,11 @@
         REGTER *first;
     } LISTTERMS;
 
-    /* thread responsible for registering all jcshell-terminal that open the 
-    named pipe. */
-    void* regTerminalThread();
+    #ifdef __REG_THREAD__
+        /* thread responsible for registering all jcshell-terminal that open
+        the named pipe. */
+        void *regTerminalThread();
+    #endif
 
     /* Sends a signal to a jcshell-terminal specified by string. */
     int exitterminal(char *);

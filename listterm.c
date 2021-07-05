@@ -1,5 +1,8 @@
-#include "listterm.h"
-#include "ourheadfile.h"
+#include "headers/listterm.h"
+#define __FILE_PIPE__
+#include "headers/ourheadfile.h"
+
+extern errno;
 
 extern int exit2;
 extern LISTTERMS *lsterms;
@@ -18,19 +21,21 @@ void *regTerminalThread(){
 	int fd, pid, tam;
 	char term_pid[20];
 	
-	if(mkfifo(NAMED_PIPE_REG, S_IRUSR | S_IWUSR) < 0){
-		perror("\033[31mError opening the fifo");
-		exit(EXIT_FAILURE);
-	}
+	if(access(NAMED_PIPE_REG, F_OK))
+        if(mkfifo(NAMED_PIPE_REG, S_IRUSR | S_IWUSR) < 0){
+            perror("\033[31mError opening the fifo");
+            exit(EXIT_FAILURE);
+        }
 	
 	if((fd = open(NAMED_PIPE_REG, O_RDONLY)) < 0){
 		perror("\033[31mCouldn\'t open named pipe \"jchell-in\"\033[m");
-		exit(OPEN_FILE_FAILED);
+		exit(errno);
 	}
 
 	while(1){
 		if(read(fd, term_pid, 20) > 0){
             if((pid = atoi(term_pid)) < 2){
+                errno = EINVAL;
                 perror("\033[31mUnable to register terminal pid.");
                 exit(EINVAL);
             }
@@ -38,6 +43,7 @@ void *regTerminalThread(){
             pthread_mutex_lock(&mutex2);
             if(!insert_new_terminal_id(lsterms, pid)){
                 pthread_mutex_unlock(&mutex2);
+                errno = EINVAL;
                 perror("\033[31mUnable to register terminal pid.");
                 exit(EINVAL);
             }
@@ -77,7 +83,7 @@ int exitterminal(char *args){
 
 int exitall(int sig){
     REGTER *ant, *aux = lsterms->first;
-	
+
     while(aux != NULL){
         ant = aux;
 		if(kill(aux->id_terminal, sig) < 0) return 0;
@@ -90,7 +96,7 @@ int exitall(int sig){
 
 int insert_new_terminal_id(LISTTERMS *ls, unsigned int id){
     REGTER *termid;
-    
+
     if(ls == NULL) return 0;
 
     termid = (REGTER *) malloc(sizeof(REGTER));
