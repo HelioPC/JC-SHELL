@@ -10,3 +10,6 @@ jcshell-out-*
 
 # ignore all *-in files (named pipes)
 *-in
+
+# ignore all changes on log.txt
+log.txt
