@@ -34,7 +34,7 @@
 #define __FILE_PIPE__
 #include "headers/ourheadfile.h"
 
-extern errno;
+extern int errno;
 
 void sighandler(int);
 

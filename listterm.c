@@ -2,7 +2,7 @@
 #define __FILE_PIPE__
 #include "headers/ourheadfile.h"
 
-extern errno;
+extern int errno;
 
 extern int exit2;
 extern LISTTERMS *lsterms;

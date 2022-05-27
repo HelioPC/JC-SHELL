@@ -16,3 +16,27 @@ total execution time: 63 s
 iteration 5
 pid: 6766 execution time: 30 s
 total execution time: 93 s
+iteration 6
+pid: 34027 execution time: 2 s
+total execution time: 95 s
+iteration 7
+pid: 34052 execution time: 12 s
+total execution time: 107 s
+iteration 8
+pid: 5958 execution time: 0 s
+total execution time: 107 s
+iteration 9
+pid: 5973 execution time: 0 s
+total execution time: 107 s
+iteration 10
+pid: 6030 execution time: 0 s
+total execution time: 107 s
+iteration 11
+pid: 6055 execution time: 0 s
+total execution time: 107 s
+iteration 12
+pid: 6078 execution time: 0 s
+total execution time: 107 s
+iteration 13
+pid: 6148 execution time: 10 s
+total execution time: 117 s

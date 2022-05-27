@@ -12,4 +12,6 @@ jcshell-out-*
 *-in
 
 # ignore all changes on log.txt
-log.txt
+log.*
+
+.vscode
