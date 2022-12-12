@@ -112,6 +112,9 @@ int main(int argc, char **argv){
 		/* Read the command */
         if(fgets(buffer, BUFFERSIZE, stdin) == NULL) continue;
 
+        printf("\n%s\n", buffer);
+        fflush(stdin);
+
         if(feof(stdin) != 0) strcpy(buffer, "exit");
 
         if(strstr(buffer, "exit")) exit_ = 1;
