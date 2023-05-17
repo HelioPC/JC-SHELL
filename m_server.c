@@ -23,7 +23,9 @@ pthread_mutex_t mutex;
 
 pthread_cond_t var_cond;
 
-int sockfd, ret, total_time = 0;
+int sockfd, ret;
+
+double total_time = 0.0;
 
 struct sockaddr_in serverAddr;
 
@@ -43,7 +45,7 @@ void calculate()
     {
         count += times->clients[i];
     }
-    total_time = count;
+    total_time = count / times->qtd;
 }
 
 void *acceptConections(void *args);
@@ -178,7 +180,7 @@ void *handle_time(void *args)
     {
         calculate();
         char msg[180];
-        sprintf(msg, "Tempo corrente para todos os nós: %d UTC", total_time);
+        sprintf(msg, "Tempo corrente para todos os nós: %.2f UTC", total_time);
 
         for (size_t i = 0; i < lcl->qtd; i++)
         {
@@ -188,7 +190,7 @@ void *handle_time(void *args)
                 continue;
             }
         }
-        printf("Tempo corrente para todos os nós: %d UTC", total_time);
+        printf("Tempo corrente para todos os nós: %.2f UTC", total_time);
     }
     total_time = 0;
     pthread_mutex_unlock(&mutex);
