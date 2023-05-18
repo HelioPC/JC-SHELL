@@ -1,9 +1,0 @@
-fibonacci 20000
-fibonacci 10203
-fibonacci 23111
-fibonacci 10000
-fibonacci 20921
-fibonacci 10101
-fibonacci 26303
-fibonacci 1092
-exit-global
